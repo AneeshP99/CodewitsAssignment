@@ -6,7 +6,7 @@ Setup:
 use the following commands:
 npm init
 npm install express
-3. Install remaining requirements:
+3. Install remaining requirements:"\n"
    Install mongo with command:
      npm install express mongoose jsonwebtoken bcryptjs dotenv
    Install mocha tool:
