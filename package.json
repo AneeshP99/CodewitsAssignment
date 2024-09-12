@@ -1,0 +1,32 @@
+{
+  "name": "expressbycodewits",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AneeshP99/CodewitsAssignment.git"
+  },
+  "author": "Aneesh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AneeshP99/CodewitsAssignment/issues"
+  },
+  "homepage": "https://github.com/AneeshP99/CodewitsAssignment#readme",
+  "description": "",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.6.2"
+  },
+  "devDependencies": {
+    "chai": "^5.1.1",
+    "mocha": "^10.7.3",
+    "nodemon": "^3.1.4",
+    "supertest": "^7.0.0"
+  }
+}
