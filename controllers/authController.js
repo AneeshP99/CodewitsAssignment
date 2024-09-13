@@ -2,18 +2,24 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
+// Register user (Admin or Employee)
 const register = async (req, res) => {
   const { name, email, password, role } = req.body;
   try {
+    // Ensure role is either admin or employeee
+    if (!['admin', 'employee'].includes(role)) {
+      return res.status(400).send('Invalid role provided');
+    }
+
     // Check if user already exists
     let user = await User.findOne({ email });
     if (user) return res.status(400).send('User already exists');
 
-    // Create a new user
+    
     user = new User({ name, email, password, role });
     await user.save();
 
-    // Generate JWT
+    
     const token = jwt.sign({ _id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.status(201).send({ token });
   } catch (error) {
@@ -21,10 +27,10 @@ const register = async (req, res) => {
   }
 };
 
+
 const login = async (req, res) => {
   const { email, password } = req.body;
   try {
-    
     const user = await User.findOne({ email });
     if (!user) return res.status(400).send('Invalid credentials');
 
