@@ -24,7 +24,7 @@ const createEmployee = async (req, res) => {
         res.status(200).send({ token });
         const savedUser = await newUser.save();
 
-        return { savedStudent, savedUser };
+        return { savedEmployee, savedUser };
   } catch (error) {
     res.status(400).send(error.message);
   }
