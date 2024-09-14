@@ -1,4 +1,5 @@
 # CodewitsAssignment
+Description:
 
 Setup:
 1. install Node
@@ -11,3 +12,9 @@ use the following commands:
 4. Install mocha tool:  
    npm install mocha chai supertest --save-dev  
 5. Download and install MongoDB from official documentation
+
+Run:
+1. Run the server with command:
+   node server.js
+   or
+   npm start
