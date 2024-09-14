@@ -4,7 +4,9 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const routes = require('./routes'); // Importing all routes from the routes' index.js
 //const errorHandler = require('./middleware/errorHandler'); // Custom error handler middleware if required
-
+const passport = require('passport'); // Adjust path as needed
+const { jwt } = require('./config/config');
+const {jwtStrategy} = require('./config/passport');
 // Load environment variables
 dotenv.config();
 
@@ -24,7 +26,8 @@ mongoose.connect(process.env.MONGO_URI, {
 
 // Routes
 app.use('/api', routes); // This will automatically include auth, employee, and leave routes from routes/index.js
-
+app.use(passport.initialize());
+passport.use('jwt',jwtStrategy);
 // Error handling middleware
 //app.use(errorHandler);
 
