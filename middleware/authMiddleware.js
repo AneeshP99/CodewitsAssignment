@@ -1,21 +1,43 @@
-const jwt = require('jsonwebtoken');
+const passport = require('passport');
+const httpStatus = require('http-status');
+const { roleRights } = require('../config/roles');
 
-const verifyToken = (req, res, next) => {
-  const token = req.header('Authorization');
-  if (!token) return res.status(401).send('Access Denied');
+// Initialize Passport strategies
+passport.use(require('../config/passport').jwtStrategy);
 
-  try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = verified;
-    next();
-  } catch (error) {
-    res.status(400).send('Invalid Token');
-  }
+const verifyCallback = (req, resolve, reject, requiredRights) => async (err, user, info) => {
+    if (err || info || !user) {
+      console.log('Authentication error:', err || info); // Log authentication issues
+      return reject(new Error('Please authenticate'));
+    }
+    req.user = user;
+
+    if (requiredRights) {
+        const userRights = roleRights.get(user.role);
+        const hasRequiredRights = requiredRights.every((requiredRight) => userRights.includes(requiredRight));
+        if (!hasRequiredRights && req.params.userId !== user.id) {
+          console.log('User does not have required rights'); // Log insufficient rights
+            return reject(new Error('Forbidden'));
+        }
+    }
+
+    resolve();
 };
 
-const roleAuth = (role) => (req, res, next) => {
-  if (req.user.role !== role) return res.status(403).send('Access Denied');
-  next();
+const auth = (requiredRights) => async (req, res, next) => {
+    new Promise((resolve, reject) => {
+        passport.authenticate('jwt', { session: false }, (err, user, info) => {
+            verifyCallback(req, resolve, reject, requiredRights)(err, user, info);
+        })(req, res, next);
+    })
+    .then(() => next())
+    .catch((error) => {
+        if (error.message === 'Forbidden') {
+            res.status(httpStatus.FORBIDDEN).json({ message: error.message });
+        } else {
+            res.status(httpStatus.UNAUTHORIZED).json({ message: error.message });
+        }
+    });
 };
 
-module.exports = { verifyToken, roleAuth };
+module.exports = { auth, verifyCallback };
