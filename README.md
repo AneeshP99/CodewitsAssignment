@@ -1,5 +1,6 @@
 # CodewitsAssignment
 Description:
+Develop a backend for a Human Resource Management System (HRMS) where admins can manage employees, and employees can track leaves and submit requests.
 
 Setup:
 1. install Node
