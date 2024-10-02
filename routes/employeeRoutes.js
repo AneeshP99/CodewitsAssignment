@@ -1,12 +1,13 @@
 const express = require('express');
-const { createEmployee, getEmployees, updateEmployee, deleteEmployee } = require('../controllers/employeeController');
+const { createEmployee, getEmployees,deleteEmployee,getEmployee } = require('../controllers/employeeController');
 const  {auth}  = require('../middleware/authMiddleware'); // Destructure auth from the export
 const router = express.Router();
 
-// Routes with role-based authorization
-router.post('/', auth(['admin']), createEmployee);
-router.get('/', getEmployees);
-router.put('/:id', updateEmployee);
-router.delete('/:id', auth(['admin']), deleteEmployee);
+
+router.post('/', auth(['createEmp']), createEmployee);
+router.get('/',auth(), getEmployees);
+router.delete('/:employeeId', auth(['createEmp']), deleteEmployee);
+router.get('/:employeeId', auth(), getEmployee);
+
 
 module.exports = router;

@@ -2,12 +2,11 @@ const passport = require('passport');
 const httpStatus = require('http-status');
 const { roleRights } = require('../config/roles');
 
-// Initialize Passport strategies
-passport.use(require('../config/passport').jwtStrategy);
+
 
 const verifyCallback = (req, resolve, reject, requiredRights) => async (err, user, info) => {
     if (err || info || !user) {
-      console.log('Authentication error:', err || info); // Log authentication issues
+      console.log('Authentication error:', err || info); 
       return reject(new Error('Please authenticate'));
     }
     req.user = user;
@@ -16,7 +15,7 @@ const verifyCallback = (req, resolve, reject, requiredRights) => async (err, use
         const userRights = roleRights.get(user.role);
         const hasRequiredRights = requiredRights.every((requiredRight) => userRights.includes(requiredRight));
         if (!hasRequiredRights && req.params.userId !== user.id) {
-          console.log('User does not have required rights'); // Log insufficient rights
+          console.log('User does not have required rights'); 
             return reject(new Error('Forbidden'));
         }
     }

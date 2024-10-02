@@ -1,10 +1,12 @@
 const express = require('express');
-const { submitLeaveRequest, updateLeaveStatus } = require('../controllers/leaveController');
+const { createLeave,getLeaves,judgeLeave,getLeave,deleteLeave } = require('../controllers/leaveController');
 const {auth} = require('../middleware/authMiddleware');
 const {verifyCallback} = require('../middleware/authMiddleware');
 const router = express.Router();
 
-router.post('/', verifyCallback, submitLeaveRequest);
-router.put('/:id', verifyCallback, auth(['employee']), updateLeaveStatus);
-
+router.post('/',auth(['createL']),createLeave);
+router.get('/', getLeaves);
+router.get('/:leaveId',auth(), getLeave);
+router.put('/:leaveId/judge', auth(['judge']), judgeLeave);
+router.delete('/:leaveId', auth(['createL']), deleteLeave);
 module.exports = router;
