@@ -1,62 +1,90 @@
+const httpStatus = require('http-status');
 const Employee = require('../models/employee.model');
-const jwt = require('jsonwebtoken');
 const User = require('../models/users.model');
-const config = require('../config/config');
+
+const getEmployeeById = async (req,res) =>{
+  try {
+      return await Employee.findById(req.params.employeeId);
+  }
+  catch(error){
+      throw error;
+  }
+};
 
 const createEmployee = async (req, res) => {
-  const { name, email, position, salary, department } = req.body;
   try {
-    const employee = new Employee({ name, email, position, salary, department });
-    await employee.save();
-    res.status(201).send(employee);
+    const { name,email,position,salary,department,password} = req.body;
 
-    const savedEmployee = await employee.save();
-    
-        // Create a corresponding user for login with employee role
-        const newUser = new User({
-            name,
-            email,
-            password,
-            role: 'employee',
-            EmployeeId: savedEmployee._id
-        });
-        const token = jwt.sign({ _id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(200).send({ token });
-        const savedUser = await newUser.save();
-
-        return { savedEmployee, savedUser };
-  } catch (error) {
-    res.status(400).send(error.message);
+    const newEmployee = new Employee({
+      name,
+      email,
+      position,
+      salary,
+      department
+    });
+    console.log(11);
+    const savedEmployee = await newEmployee.save();
+    console.log(12);
+    const newUser = new User({
+        name,
+        email,
+        password,
+        role: 'employee',
+        employeeId: savedEmployee._id
+    });
+    console.log(13);
+    const savedUser = await newUser.save();
+    res.status(httpStatus.CREATED).send({ savedEmployee, savedUser });
+    console.log(14);
+  } catch (err) {
+    throw err;
   }
+    
 };
 
 const getEmployees = async (req, res) => {
   try {
-    const employees = await Employee.find();
-    res.status(200).send(employees);
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
+    const result = await Employee.find(req.query);
+    res.send(result);
+    }
+catch (error) {
+    throw error;
+}
+    
 };
 
-const updateEmployee = async (req, res) => {
+const getEmployee = async (req, res) => {
   try {
-    const employee = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!employee) return res.status(404).send('Employee not found');
-    res.status(200).send(employee);
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
+    console.log("10001")
+     const employee = await Employee.findById(req.params.employeeId);
+     console.log("1000")
+     console.log(employee)
+     res.send(employee);
+     console.log("10002")
+      }
+catch(error){
+    throw error;
+}   
 };
+
 
 const deleteEmployee = async (req, res) => {
   try {
-    const employee = await Employee.findByIdAndDelete(req.params.id);
-    if (!employee) return res.status(404).send('Employee not found');
-    res.status(200).send('Employee deleted');
-  } catch (error) {
-    res.status(400).send(error.message);
+    const employee=await Employee.findByIdAndDelete(req.params.employeeId);
+    if (!employee) {
+      return res.status(httpStatus.NOT_FOUND).send({ message: 'Employee not found' });
+    }   
+    res.send(employee);
   }
+catch(error){
+    throw error;
+}
+    
 };
 
-module.exports = { createEmployee, getEmployees, updateEmployee, deleteEmployee };
+module.exports = {
+    createEmployee,
+    getEmployees,
+    getEmployee,
+    deleteEmployee
+};
